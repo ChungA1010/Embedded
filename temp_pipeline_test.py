@@ -24,7 +24,7 @@ import os
 import threading
 from capture_v2 import CameraCapture
 from mic.capture import capture_and_save as mic_capture_and_save
-import rpi_buffer_trigger_v2 as rbt
+import rpi_buffer_trigger_v3 as rbt
 
 # ============================================================
 # 테스트 설정 -- NGROK_URL만 실제 서버 값으로 채우면 됩니다
