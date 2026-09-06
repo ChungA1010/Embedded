@@ -1,0 +1,21 @@
+// ============================================
+// WiFi 연결 정보
+// ============================================
+
+#define SECRET_SSID "CJM"        // 와이파이 SSID
+#define SECRET_PASS "1234567811"        // 와이파이 비밀번호
+
+
+// ============================================
+// IoTCoss 개방형사물인터넷 플랫폼 개인 연결 정보
+// ============================================
+
+#define API_HOST "onem2m.iotcoss.ac.kr"    // 플랫폼 주소
+#define HTTPS_PORT 443                     // HTTPS 포트번호
+
+// https://platform.iotcoss.ac.kr/dashboard/api-guide
+
+#define ORIGIN "SOrigin_jjjn"      // oneM2M Origin(예: SOrigin_학번_t1)
+#define API_KEY "e6Y4xj8loApYT5ZiIeu2mpyFwCjw0C7N"             // iotCOSS API KEY
+#define CREATOR "dgu2022111934"             // iotCOSS CREATOR(예: sju12345678)
+#define LECTURE "LCT_20260002"             // iotCOSS LECTURE(예: LCT_20250009)

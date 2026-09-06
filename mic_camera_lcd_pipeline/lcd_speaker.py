@@ -1,8 +1,8 @@
 """
-라즈베리파이: Mobius의 command 컨테이너 구독 -> 모니터 문구 표시 + 감정 폴더 음악 재생 (수정판 v3)
+라즈베리파이: Mobius의 cmd 컨테이너 구독 -> 모니터 문구 표시 + 감정 폴더 음악 재생 (수정판 v3)
 
 v2에서 고친 것:
-  1) sur 필터 추가 - command 구독에서 온 알림만 처리 (온습도/좌석 알림 오작동 방지)
+  1) sur 필터 추가 - cmd 구독에서 온 알림만 처리 (온습도/좌석 알림 오작동 방지)
   2) tkinter 스레드 안전성 - queue로 UI 갱신 (MQTT 스레드에서 직접 UI 호출 금지)
   3) 음악 경로를 홈 디렉토리 기준으로 자동 설정 (사용자 이름이 pi가 아니어도 동작)
   4) mpg123 없을 때/폴더 없을 때 명확한 안내 출력
@@ -24,10 +24,10 @@ import paho.mqtt.client as mqtt
 # ---- 설정값 ----
 MQTT_HOST = "onem2m.iotcoss.ac.kr"
 MQTT_PORT = 11883
-ORIGIN = "SOrigin_room"
+ORIGIN = "SOrigin_jjjn"
 SUB_TOPIC = f"/oneM2M/req/Mobius/{ORIGIN}/#"
-COMMAND_MARKER = "command"          # sur 안에 이 단어가 있는 알림만 처리
-MUSIC_DIR = os.path.expanduser("~/music")   # 홈디렉토리/music (사용자 이름 무관)
+COMMAND_MARKER = "cmd"          # sur 안에 이 단어가 있는 알림만 처리
+MUSIC_DIR = os.path.expanduser("~/bgm")   # 홈디렉토리/music (사용자 이름 무관)
 
 ui_queue = queue.Queue()            # MQTT 스레드 -> 화면 스레드로 문구 전달
 
@@ -41,7 +41,7 @@ class ScreenDisplay:
         self.root.attributes("-fullscreen", True)
         self.root.configure(bg="black")
         self.label = tk.Label(
-            self.root, text="대기 중...", font=("NanumGothic", 48),
+            self.root, text=" ", font=("NanumGothic", 48),
             fg="white", bg="black", wraplength=1000, justify="center"
         )
         self.label.pack(expand=True)
@@ -76,9 +76,9 @@ def play_music(mood: str):
         return
     path = os.path.join(folder, random.choice(files))
 
-    subprocess.run(["pkill", "-f", "mpg123"], stderr=subprocess.DEVNULL)
+    #subprocess.run(["pkill", "-f", "mpg123"], stderr=subprocess.DEVNULL)
     try:
-        subprocess.Popen(["mpg123", "-q", path])
+        subprocess.Popen(["paplay", path])    
         print(f"[스피커] {mood} -> {os.path.basename(path)} 재생")
     except FileNotFoundError:
         print("[스피커] mpg123이 설치 안 됨: sudo apt install mpg123")
@@ -109,9 +109,10 @@ def on_connect(client, userdata, flags, rc, properties=None):
 
 
 def on_message(client, userdata, msg):
+    print(msg.payload.decode('utf-8'))
     try:
         data = json.loads(msg.payload.decode("utf-8"))
-        sgn = data.get("m2m:sgn", {})
+        sgn = data.get("pc",{}).get("m2m:sgn", {})
 
         # --- 필터: command 구독에서 온 알림만 처리 ---
         sur = sgn.get("sur", "")
